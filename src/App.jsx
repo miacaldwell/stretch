@@ -5,10 +5,48 @@ import TimerView from "./components/TimerView.jsx";
 
 const STORAGE_ROUTINES = "stretch.routines";
 
+const ASSET_BASE = import.meta.env.BASE_URL;
+
 const defaultStretches = [
   {
-    id: "neck-rolls",
-    name: "Neck Roll",
+    id: "butterfly",
+    name: "Butterfly",
+    duration: 30,
+    photo: `${ASSET_BASE}butterfly-cat-lilac.png`
+  },
+  {
+    id: "cat-cow",
+    name: "Cat-Cow",
+    duration: 30,
+    photo: ""
+  },
+  {
+    id: "reclined-buttfly",
+    name: "Reclined Butterfly",
+    duration: 30,
+    photo: ""
+  },
+  {
+    id: "childs-pose",
+    name: "Child's Pose",
+    duration: 60,
+    photo: ""
+  },
+  {
+    id: "cobra",
+    name: "Cobra Stretch",
+    duration: 45,
+    photo: ""
+  },
+  {
+    id: "wide-leg-forward-fold",
+    name: "Wide-Leg Forward Fold",
+    duration: 60,
+    photo: ""
+  },
+  {
+    id: "shoulder-circle",
+    name: "Shoulder Circles",
     duration: 30,
     photo: ""
   },
@@ -80,6 +118,7 @@ export default function App() {
   const [selectedStretchId, setSelectedStretchId] = useState(
     defaultStretches[0]?.id ?? ""
   );
+  const [editingRoutineId, setEditingRoutineId] = useState(null);
   const [activeRoutineId, setActiveRoutineId] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [remaining, setRemaining] = useState(0);
@@ -166,21 +205,57 @@ export default function App() {
 
     if (!trimmedName || draftItems.length === 0) return;
 
-    const newRoutine = {
-      id: makeId(),
-      name: trimmedName,
-      items: draftItems
-    };
+    if (editingRoutineId) {
+      setRoutines((prev) =>
+        prev.map((routine) =>
+          routine.id === editingRoutineId
+            ? {
+                ...routine,
+                name: trimmedName,
+                items: draftItems
+              }
+            : routine
+        )
+      );
+      setEditingRoutineId(null);
+    } else {
+      const newRoutine = {
+        id: makeId(),
+        name: trimmedName,
+        items: draftItems
+      };
 
-    setRoutines((prev) => [...prev, newRoutine]);
+      setRoutines((prev) => [...prev, newRoutine]);
+    }
+
     setDraftName("");
     setDraftItems([]);
+  };
+
+  const handleEditRoutine = (routineId) => {
+    const routine = routines.find((item) => item.id === routineId);
+    if (!routine) return;
+    setDraftName(routine.name);
+    setDraftItems(routine.items);
+    setEditingRoutineId(routineId);
+    if (!selectedStretchId && stretches[0]) {
+      setSelectedStretchId(stretches[0].id);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setDraftName("");
+    setDraftItems([]);
+    setEditingRoutineId(null);
   };
 
   const handleDeleteRoutine = (routineId) => {
     setRoutines((prev) => prev.filter((routine) => routine.id !== routineId));
     if (routineId === activeRoutineId) {
       resetTimer();
+    }
+    if (routineId === editingRoutineId) {
+      handleCancelEdit();
     }
   };
 
@@ -235,12 +310,15 @@ export default function App() {
   const activeStretch = stretches.find(
     (stretch) => stretch.id === activeStretchId
   );
-  const activePhoto = activeStretch?.photo;
-
   return (
     <div className="app">
       <header className="app__header">
-        <div>
+        <div className="app__brand">
+          <img
+            className="app__logo"
+            src={`${import.meta.env.BASE_URL}cat-lilac.png`}
+            alt="Stretching cat icon"
+          />
           <h1>Stretch</h1>
         </div>
         <nav className="tabs">
@@ -283,6 +361,9 @@ export default function App() {
             onRemoveDraftItem={handleRemoveDraftItem}
             onDraftDurationChange={handleDraftDurationChange}
             onSaveRoutine={handleSaveRoutine}
+            onEditRoutine={handleEditRoutine}
+            onCancelEdit={handleCancelEdit}
+            isEditing={Boolean(editingRoutineId)}
             onStartRoutine={startRoutine}
             onDeleteRoutine={handleDeleteRoutine}
             formatTime={formatTime}
@@ -294,7 +375,6 @@ export default function App() {
             activeRoutine={activeRoutine}
             activeItems={activeItems}
             activeStretch={activeStretch}
-            activePhoto={activePhoto}
             remaining={remaining}
             formatTime={formatTime}
             mode={mode}
@@ -308,7 +388,6 @@ export default function App() {
             }}
             onGoToRoutines={() => setView("routines")}
             onGoToIndex={goToIndex}
-            stretches={stretches}
           />
         )}
       </main>

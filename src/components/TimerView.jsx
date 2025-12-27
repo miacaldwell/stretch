@@ -2,7 +2,6 @@ export default function TimerView({
   activeRoutine,
   activeItems,
   activeStretch,
-  activePhoto,
   remaining,
   formatTime,
   mode,
@@ -12,9 +11,18 @@ export default function TimerView({
   onReset,
   onDone,
   onGoToRoutines,
-  onGoToIndex,
-  stretches
+  onGoToIndex
 }) {
+  const activeItem = activeItems[currentIndex];
+  const activeDuration = activeItem?.duration ?? activeStretch?.duration ?? 0;
+  const safeDuration = Math.max(activeDuration, 1);
+  const rawProgress = (safeDuration - remaining) / safeDuration;
+  const progress =
+    mode === "completed" ? 1 : Math.min(1, Math.max(0, rawProgress));
+  const canGoPrev = currentIndex > 0 && mode !== "completed";
+  const canGoNext =
+    currentIndex < activeItems.length - 1 && mode !== "completed";
+
   return (
     <section className="panel panel--timer">
       <div className="panel__header">
@@ -34,27 +42,29 @@ export default function TimerView({
       )}
 
       {activeRoutine && (
-        <div className="timer">
-          <div className="timer__header">
+        <div className="timer timer--focus">
+          <div className="timer__meta">
             <h3>{activeRoutine.name}</h3>
             <span className={`badge badge--${mode}`}>{mode}</span>
           </div>
-          <div className="timer__body">
-            <div className="timer__now">
-              <div className="timer__media">
-                {activePhoto ? (
-                  <img src={activePhoto} alt={activeStretch?.name ?? "Stretch"} />
-                ) : (
-                  <div className="photo-placeholder" aria-hidden="true" />
-                )}
-              </div>
+
+          <div className="timer__ring" style={{ "--progress": progress }}>
+            <div className="timer__ring-inner">
               <p className="timer__label">Now</p>
-              <h4>{activeStretch?.name ?? "Stretch"}</h4>
+              <div className="timer__count">{formatTime(remaining)}</div>
+              <p className="timer__stretch">{activeStretch?.name ?? "Stretch"}</p>
             </div>
-            <div className="timer__count">{formatTime(remaining)}</div>
           </div>
 
-          <div className="timer__controls">
+          <div className="timer__controls timer__controls--primary">
+            <button
+              className="ghost timer__icon"
+              onClick={() => onGoToIndex(currentIndex - 1)}
+              disabled={!canGoPrev}
+              aria-label="Previous stretch"
+            >
+              Prev
+            </button>
             {mode === "running" && (
               <button className="secondary" onClick={onPause}>
                 Pause
@@ -71,49 +81,18 @@ export default function TimerView({
               </button>
             )}
             {mode !== "completed" && (
-              <button className="ghost" onClick={onReset}>
-                Stop
+              <button className="ghost timer__icon" onClick={onReset}>
+                X
               </button>
             )}
-          </div>
-
-          <div className="timer__nav">
             <button
-              className="ghost"
-              onClick={() => onGoToIndex(currentIndex - 1)}
-              disabled={currentIndex === 0 || mode === "completed"}
-            >
-              Previous
-            </button>
-            <button
-              className="ghost"
+              className="ghost timer__icon"
               onClick={() => onGoToIndex(currentIndex + 1)}
-              disabled={currentIndex >= activeItems.length - 1 || mode === "completed"}
+              disabled={!canGoNext}
+              aria-label="Next stretch"
             >
               Next
             </button>
-          </div>
-
-          <div className="timer__list">
-            {activeItems.map((item, index) => {
-              const stretch = stretches.find(
-                (entry) => entry.id === item.stretchId
-              );
-              const duration = item.duration ?? stretch?.duration ?? 0;
-              return (
-                <div
-                  key={`${item.stretchId}-${index}`}
-                  className={
-                    index === currentIndex
-                      ? "timer__row timer__row--active"
-                      : "timer__row"
-                  }
-                >
-                  <span>{stretch?.name ?? "Missing stretch"}</span>
-                  <span>{formatTime(duration)}</span>
-                </div>
-              );
-            })}
           </div>
         </div>
       )}

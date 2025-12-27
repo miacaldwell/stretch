@@ -10,6 +10,9 @@ export default function RoutinesView({
   onRemoveDraftItem,
   onDraftDurationChange,
   onSaveRoutine,
+  onEditRoutine,
+  onCancelEdit,
+  isEditing,
   onStartRoutine,
   onDeleteRoutine,
   formatTime
@@ -92,13 +95,20 @@ export default function RoutinesView({
             })}
           </div>
         </div>
-        <button
-          type="submit"
-          className="primary"
-          disabled={!draftName || draftItems.length === 0}
-        >
-          Save Routine
-        </button>
+        <div className="builder__actions">
+          <button
+            type="submit"
+            className="primary"
+            disabled={!draftName || draftItems.length === 0}
+          >
+            {isEditing ? "Update Routine" : "Save Routine"}
+          </button>
+          {isEditing && (
+            <button type="button" className="ghost" onClick={onCancelEdit}>
+              Cancel Edit
+            </button>
+          )}
+        </div>
       </form>
 
       <div className="panel__section">
@@ -127,6 +137,9 @@ export default function RoutinesView({
               <div className="card__actions">
                 <button className="primary" onClick={() => onStartRoutine(routine.id)}>
                   Start
+                </button>
+                <button className="secondary" onClick={() => onEditRoutine(routine.id)}>
+                  Edit
                 </button>
                 <button className="ghost" onClick={() => onDeleteRoutine(routine.id)}>
                   Delete
