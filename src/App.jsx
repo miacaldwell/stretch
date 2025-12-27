@@ -7,8 +7,8 @@ const STORAGE_ROUTINES = "stretch.routines";
 
 const defaultStretches = [
   {
-    id: "neck-release",
-    name: "Neck Release",
+    id: "neck-rolls",
+    name: "Neck Roll",
     duration: 30,
     photo: ""
   },
