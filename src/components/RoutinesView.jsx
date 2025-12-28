@@ -22,8 +22,8 @@ export default function RoutinesView({
   formatTime
 }) {
   const sectionRef = useRef(null);
-  const [draggingIndex, setDraggingIndex] = useState(null);
-  const [dragOverIndex, setDragOverIndex] = useState(null);
+  const [moveIndex, setMoveIndex] = useState(null);
+  const longPressRef = useRef(null);
 
   useEffect(() => {
     if (!editScrollToken) return;
@@ -32,33 +32,49 @@ export default function RoutinesView({
     }
   }, [editScrollToken]);
 
-  const handleDragStart = (index) => (event) => {
-    setDraggingIndex(index);
-    setDragOverIndex(null);
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.setData("text/plain", String(index));
+  useEffect(() => {
+    return () => {
+      if (longPressRef.current) {
+        window.clearTimeout(longPressRef.current);
+      }
+    };
+  }, []);
+
+  const handleStartMove = (index) => {
+    setMoveIndex((prev) => (prev === index ? null : index));
   };
 
-  const handleDragOver = (index) => (event) => {
-    event.preventDefault();
-    if (dragOverIndex !== index) {
-      setDragOverIndex(index);
+  const handleMoveTo = (targetIndex) => {
+    if (moveIndex === null) return;
+    if (targetIndex < 0 || targetIndex >= draftItems.length) return;
+    onReorderDraftItems(moveIndex, targetIndex);
+    setMoveIndex(targetIndex);
+  };
+
+  const isInteractiveTarget = (event) =>
+    event.target.closest("button, input, select, textarea, a");
+
+  const handlePointerDown = (index) => (event) => {
+    if (isInteractiveTarget(event)) return;
+    if (event.pointerType !== "touch" && event.pointerType !== "pen") return;
+    if (longPressRef.current) {
+      window.clearTimeout(longPressRef.current);
+    }
+    longPressRef.current = window.setTimeout(() => {
+      handleStartMove(index);
+    }, 450);
+  };
+
+  const handlePointerUp = () => {
+    if (longPressRef.current) {
+      window.clearTimeout(longPressRef.current);
+      longPressRef.current = null;
     }
   };
 
-  const handleDrop = (index) => (event) => {
-    event.preventDefault();
-    const rawIndex = event.dataTransfer.getData("text/plain");
-    const fromIndex = rawIndex ? Number(rawIndex) : draggingIndex;
-    if (Number.isNaN(fromIndex) || fromIndex === null) return;
-    onReorderDraftItems(fromIndex, index);
-    setDraggingIndex(null);
-    setDragOverIndex(null);
-  };
-
-  const handleDragEnd = () => {
-    setDraggingIndex(null);
-    setDragOverIndex(null);
+  const handleDoubleClick = (index) => (event) => {
+    if (isInteractiveTarget(event)) return;
+    handleStartMove(index);
   };
   return (
     <section className="panel" ref={sectionRef}>
@@ -118,41 +134,74 @@ export default function RoutinesView({
               const stretch = stretches.find(
                 (entry) => entry.id === item.stretchId
               );
-              const isDragging = draggingIndex === index;
-              const isOver = dragOverIndex === index && draggingIndex !== null;
+              const isSelected = moveIndex === index;
+              const canMoveUp = isSelected && index > 0;
+              const canMoveDown = isSelected && index < draftItems.length - 1;
               return (
-                <div
-                  key={`${item.stretchId}-${index}`}
-                  className={`builder__item${isDragging ? " builder__item--dragging" : ""}${isOver ? " builder__item--over" : ""}`}
-                  draggable
-                  onDragStart={handleDragStart(index)}
-                  onDragOver={handleDragOver(index)}
-                  onDrop={handleDrop(index)}
-                  onDragEnd={handleDragEnd}
-                >
-                  <span className="builder__name">
-                    {stretch?.name ?? "Missing stretch"}
-                  </span>
-                  <label className="inline-label">
-                    <input
-                      className="input--secondary"
-                      type="number"
-                      min="10"
-                      max="600"
-                      value={item.duration ?? stretch?.duration ?? 0}
-                      onChange={(event) =>
-                        onDraftDurationChange(index, event.target.value)
-                      }
-                    />
-                  </label>
-                  <button
-                    type="button"
-                    className="btn btn--ghost builder__remove"
-                    onClick={() => onRemoveDraftItem(index)}
-                    aria-label="Remove stretch"
+                <div key={`${item.stretchId}-${index}`} className="builder__row">
+                  {isSelected && canMoveUp && (
+                    <button
+                      type="button"
+                      className="builder__move-arrow"
+                      onClick={() => handleMoveTo(index - 1)}
+                      aria-label="Move up"
+                    >
+                      ↑
+                    </button>
+                  )}
+                  <div
+                    className={`builder__item${isSelected ? " builder__item--selected" : ""}`}
+                    onPointerDown={handlePointerDown(index)}
+                    onPointerUp={handlePointerUp}
+                    onPointerCancel={handlePointerUp}
+                    onPointerLeave={handlePointerUp}
+                    onDoubleClick={handleDoubleClick(index)}
                   >
-                    X
-                  </button>
+                    <span className="builder__name">
+                      {stretch?.name ?? "Missing stretch"}
+                    </span>
+                    <label className="inline-label">
+                      <input
+                        className="input--secondary"
+                        type="number"
+                        min="10"
+                        max="600"
+                        value={item.duration ?? stretch?.duration ?? 0}
+                        onChange={(event) =>
+                          onDraftDurationChange(index, event.target.value)
+                        }
+                      />
+                    </label>
+                    <div className="builder__actions-inline">
+                      {isSelected && (
+                        <button
+                          type="button"
+                          className="btn btn--light builder__select"
+                          onClick={() => handleStartMove(index)}
+                        >
+                          Cancel
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className="btn btn--ghost builder__remove"
+                        onClick={() => onRemoveDraftItem(index)}
+                        aria-label="Remove stretch"
+                      >
+                        X
+                      </button>
+                    </div>
+                  </div>
+                  {isSelected && canMoveDown && (
+                    <button
+                      type="button"
+                      className="builder__move-arrow"
+                      onClick={() => handleMoveTo(index + 1)}
+                      aria-label="Move down"
+                    >
+                      ↓
+                    </button>
+                  )}
                 </div>
               );
             })}

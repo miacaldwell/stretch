@@ -214,6 +214,10 @@ textarea:focus {
   gap: 16px;
 }
 
+.card-grid--spaced {
+  margin-top: 12px;
+}
+
 .card {
   background: #fff;
   border-radius: 18px;
@@ -456,6 +460,11 @@ textarea:focus {
   gap: 10px;
 }
 
+.builder__row {
+  display: grid;
+  gap: 8px;
+}
+
 .builder__header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
@@ -484,6 +493,12 @@ textarea:focus {
   gap: 10px;
 }
 
+.panel__divider {
+  height: 1px;
+  margin: 16px 0;
+  background: rgba(18, 22, 44, 0.08);
+}
+
 
 .panel--log {
   background: linear-gradient(180deg, #f7f4ff 0%, #f2edff 100%);
@@ -504,18 +519,38 @@ textarea:focus {
   font-weight: 600;
 }
 
+.builder__item--selected {
+  border-color: rgba(61, 43, 119, 0.35);
+  box-shadow: 0 0 0 2px rgba(61, 43, 119, 0.08);
+}
+
 .builder__remove {
   align-self: center;
 }
 
-.builder__item--dragging {
-  opacity: 0.6;
-  cursor: grabbing;
+.builder__actions-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
-.builder__item--over {
-  border-color: rgba(18, 22, 44, 0.35);
-  box-shadow: 0 0 0 2px rgba(18, 22, 44, 0.08);
+.builder__move-arrow {
+  width: 100%;
+  border: 1px dashed rgba(61, 43, 119, 0.25);
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--deep-purple);
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.builder__move-arrow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 14px rgba(61, 43, 119, 0.12);
 }
 
 .inline-label {

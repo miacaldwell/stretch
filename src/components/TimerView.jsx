@@ -42,16 +42,46 @@ export default function TimerView({
 
   return (
     <section className="panel panel--timer">
-      <div className="panel__header">
-        <div>
-          <h2>Stretch</h2>
-          <p>Time to get flexible</p>
+      <div className="panel__section">
+        <h3>Saved routines</h3>
+        <div className="card-grid card-grid--spaced">
+          {routines.length === 0 && <p className="empty">No routines saved yet.</p>}
+          {routines.map((routine) => (
+            <article key={routine.id} className="card">
+              <div className="card__content">
+                <h3>{routine.name}</h3>
+                <p>{routine.items.length} stretches</p>
+                <p>
+                  {formatTime(
+                    routine.items.reduce((total, item) => {
+                      const stretch = stretches.find(
+                        (entry) => entry.id === item.stretchId
+                      );
+                      const duration =
+                        item.duration ?? stretch?.duration ?? 0;
+                      return total + duration;
+                    }, 0)
+                  )}
+                </p>
+              </div>
+              <div className="card__actions">
+                <button
+                  className="btn btn--primary"
+                  onClick={() => onStartRoutine(routine.id)}
+                >
+                  Start
+                </button>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
 
+      <div className="panel__divider" />
+
       {!activeRoutine && (
         <div className="empty-block">
-          <p>Select a routine to start your flow.</p>
+          <p>Edit or create a new routine.</p>
           <button className="btn btn--primary" onClick={onGoToRoutines}>
             Go to Routines
           </button>
@@ -119,42 +149,6 @@ export default function TimerView({
           </div>
         </div>
       )}
-
-      <div className="panel__section">
-        <h3>Saved routines</h3>
-        <div className="card-grid">
-          {routines.length === 0 && <p className="empty">No routines saved yet.</p>}
-          {routines.map((routine) => (
-            <article key={routine.id} className="card">
-              <div className="card__content">
-                <h3>{routine.name}</h3>
-                <p>{routine.items.length} stretches</p>
-                <p>
-                  {formatTime(
-                    routine.items.reduce((total, item) => {
-                      const stretch = stretches.find(
-                        (entry) => entry.id === item.stretchId
-                      );
-                      const duration =
-                        item.duration ?? stretch?.duration ?? 0;
-                      return total + duration;
-                    }, 0)
-                  )}
-                </p>
-              </div>
-              <div className="card__actions">
-                <button
-                  className="btn btn--primary"
-                  onClick={() => onStartRoutine(routine.id)}
-                >
-                  Start
-                </button>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-
     </section>
   );
 }
