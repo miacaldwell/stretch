@@ -41,6 +41,14 @@ const defaultStretches = [
       "Roll shoulders up, back, and down in a smooth circle. Reverse direction halfway."
   },
   {
+    id: "shoulder-rotations-arm-circles",
+    name: "Shoulder Rotations & Arm Circles",
+    photo: "",
+    tags: ["Shoulders & Chest"],
+    instructions:
+      "Roll shoulders forward and back, then make smooth arm circles forward and back with both arms."
+  },
+  {
     id: "cross-body-shoulder",
     name: "Cross-Body Shoulder Stretch",
     photo: "",
@@ -199,6 +207,158 @@ const defaultStretches = [
     tags: ["Full Body / Flow"],
     instructions:
       "Reach one arm overhead and gently lean to the opposite side. Keep chest open. Switch sides halfway."
+  },
+  {
+    id: "jumping-jacks",
+    name: "Jumping Jacks",
+    photo: "",
+    tags: ["Full Body / Flow"],
+    instructions:
+      "Jump feet out while raising arms overhead, then return to start. Keep a steady rhythm to raise your heart rate."
+  },
+  {
+    id: "high-knees",
+    name: "High Knees",
+    photo: "",
+    tags: ["Full Body / Flow"],
+    instructions:
+      "Jog in place while lifting knees toward your chest. Keep your torso tall and move quickly."
+  },
+  {
+    id: "brisk-walk-jog",
+    name: "Brisk Walk / Jog",
+    photo: "",
+    tags: ["Full Body / Flow"],
+    instructions:
+      "Walk or jog for a few minutes to warm your body and increase blood flow before stretching."
+  },
+  {
+    id: "knee-pull-ups",
+    name: "Knee Pull-Ups",
+    photo: "",
+    tags: ["Hips & Glutes"],
+    instructions:
+      "Standing tall, pull one knee into your chest until you feel a stretch. Switch sides and repeat."
+  },
+  {
+    id: "hip-rotations",
+    name: "Hip Rotations",
+    photo: "",
+    tags: ["Hips & Glutes"],
+    instructions:
+      "Balance on one leg, lift the other knee, and gently rotate the hip outward. Switch sides."
+  },
+  {
+    id: "deep-squats",
+    name: "Deep Squats",
+    photo: "",
+    tags: ["Hamstrings & Legs"],
+    instructions:
+      "Step wide and squat down as far as comfortable with heels grounded, then stand and repeat on the other side."
+  },
+  {
+    id: "flag-and-reach",
+    name: "Flag & Reach",
+    photo: "",
+    tags: ["Full Body / Flow"],
+    instructions:
+      "Standing on one foot, reach the opposite arm and leg away from your body. Switch sides."
+  },
+  {
+    id: "reverse-outside-flag",
+    name: "Reverse Outside Flag & Reach",
+    photo: "",
+    tags: ["Full Body / Flow"],
+    instructions:
+      "Bend one knee while stepping the other leg behind you and reaching the opposite arm up. Switch sides."
+  },
+  {
+    id: "torso-twists",
+    name: "Torso Twists",
+    photo: "",
+    tags: ["Spine & Back"],
+    instructions:
+      "Stand with arms bent at chest height and gently twist side to side, keeping hips stable."
+  },
+  {
+    id: "neck-rolls",
+    name: "Neck Rolls",
+    photo: "",
+    tags: ["Neck"],
+    instructions:
+      "Relax your head and roll it in gentle circles, then switch directions."
+  },
+  {
+    id: "forearm-extensor-stretch",
+    name: "Forearm Extensor Stretch",
+    photo: "",
+    tags: ["Shoulders & Chest"],
+    instructions:
+      "Extend one arm, place fingers on the opposite palm, and gently pull back. Repeat with fingers facing down."
+  },
+  {
+    id: "easy-climbing",
+    name: "Easy Climbing",
+    photo: "",
+    tags: ["Full Body / Flow"],
+    instructions:
+      "Climb a few routes or problems well below your max to warm up movement and footwork."
+  }
+];
+
+const premadeRoutines = [
+  {
+    id: "preset-morning-mobility",
+    name: "Morning Mobility",
+    items: [
+      { stretchId: "cat-cow", duration: 30 },
+      { stretchId: "childs-pose", duration: 30 },
+      { stretchId: "standing-side-bend", duration: 30 },
+      { stretchId: "standing-forward-fold", duration: 30 },
+      { stretchId: "downward-dog", duration: 30 }
+    ]
+  },
+  {
+    id: "preset-desk-reset",
+    name: "Desk Reset",
+    items: [
+      { stretchId: "neck-rotation", duration: 20 },
+      { stretchId: "ear-to-shoulder", duration: 20 },
+      { stretchId: "shoulder-circle", duration: 30 },
+      { stretchId: "cross-body-shoulder", duration: 30 },
+      { stretchId: "chest-opener-wall", duration: 30 }
+    ]
+  },
+  {
+    id: "preset-hips-hamstrings",
+    name: "Hips + Hamstrings",
+    items: [
+      { stretchId: "hip-flexor", duration: 40 },
+      { stretchId: "frog-stretch", duration: 40 },
+      { stretchId: "figure-four", duration: 40 },
+      { stretchId: "hamstring-strap", duration: 40 },
+      { stretchId: "calf-stretch", duration: 30 }
+    ]
+  },
+  {
+    id: "preset-climbing-warmup",
+    name: "Climbing Warm-Up",
+    link: "https://www.theclimbingguy.com/ten-climbing-warmup-and-stretches/",
+    items: [
+      { stretchId: "jumping-jacks", duration: 45 },
+      { stretchId: "high-knees", duration: 60 },
+      { stretchId: "brisk-walk-jog", duration: 120 },
+      { stretchId: "knee-pull-ups", duration: 40 },
+      { stretchId: "hip-rotations", duration: 40 },
+      { stretchId: "deep-squats", duration: 45 },
+      { stretchId: "flag-and-reach", duration: 40 },
+      { stretchId: "reverse-outside-flag", duration: 40 },
+      { stretchId: "shoulder-rotations-arm-circles", duration: 40 },
+      { stretchId: "torso-twists", duration: 30 },
+      { stretchId: "neck-rolls", duration: 30 },
+      { stretchId: "forearm-extensor-stretch", duration: 30 },
+      { stretchId: "easy-climbing", duration: 180 }
+    ]
   }
 ];
 
@@ -217,6 +377,19 @@ const loadJSON = (key, fallback) => {
 const saveJSON = (key, value) => {
   if (typeof window === "undefined") return;
   localStorage.setItem(key, JSON.stringify(value));
+};
+
+const mergeRoutinesWithPresets = (storedRoutines, presets) => {
+  const routinesList = Array.isArray(storedRoutines) ? storedRoutines : [];
+  if (!presets.length) return routinesList;
+  const existingIds = new Set(routinesList.map((routine) => routine.id));
+  const merged = [...routinesList];
+  presets.forEach((preset) => {
+    if (!existingIds.has(preset.id)) {
+      merged.push(preset);
+    }
+  });
+  return merged;
 };
 
 const formatTime = (value) => {
@@ -238,9 +411,10 @@ const makeId = () => `id-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
 export default function App() {
   const [view, setView] = useState("timer");
+  const [editScrollToken, setEditScrollToken] = useState(0);
   const stretches = defaultStretches;
   const [routines, setRoutines] = useState(() =>
-    loadJSON(STORAGE_ROUTINES, [])
+    mergeRoutinesWithPresets(loadJSON(STORAGE_ROUTINES, []), premadeRoutines)
   );
   const [activities, setActivities] = useState(() =>
     loadJSON(STORAGE_ACTIVITIES, [])
@@ -299,6 +473,38 @@ export default function App() {
       setSelectedStretchId(stretches[0].id);
     }
   }, [stretches, selectedStretchId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const normalizeView = (hashValue) => {
+      const trimmed = hashValue.replace("#", "").trim();
+      const allowed = new Set(["timer", "log", "stretches", "routines"]);
+      return allowed.has(trimmed) ? trimmed : null;
+    };
+
+    const initialView = normalizeView(window.location.hash);
+    if (initialView) {
+      setView(initialView);
+    }
+
+    const handleHashChange = () => {
+      const nextView = normalizeView(window.location.hash);
+      if (nextView) {
+        setView(nextView);
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const nextHash = `#${view}`;
+    if (window.location.hash !== nextHash) {
+      window.history.replaceState(null, "", nextHash);
+    }
+  }, [view]);
 
   const getRoutineDuration = (routine) => {
     const totalSeconds = routine.items.reduce((total, item) => {
@@ -443,6 +649,18 @@ export default function App() {
     );
   };
 
+  const handleReorderDraftItems = (fromIndex, toIndex) => {
+    if (fromIndex === toIndex) return;
+    setDraftItems((prev) => {
+      if (fromIndex < 0 || toIndex < 0) return prev;
+      if (fromIndex >= prev.length || toIndex >= prev.length) return prev;
+      const nextItems = [...prev];
+      const [moved] = nextItems.splice(fromIndex, 1);
+      nextItems.splice(toIndex, 0, moved);
+      return nextItems;
+    });
+  };
+
   const handleSaveRoutine = (event) => {
     event.preventDefault();
     const trimmedName = draftName.trim();
@@ -482,6 +700,7 @@ export default function App() {
     setDraftName(routine.name);
     setDraftItems(routine.items);
     setEditingRoutineId(routineId);
+    setEditScrollToken((prev) => prev + 1);
     if (!selectedStretchId && stretches[0]) {
       setSelectedStretchId(stretches[0].id);
     }
@@ -619,10 +838,12 @@ export default function App() {
             onAddDraftItem={handleAddDraftItem}
             onRemoveDraftItem={handleRemoveDraftItem}
             onDraftDurationChange={handleDraftDurationChange}
+            onReorderDraftItems={handleReorderDraftItems}
             onSaveRoutine={handleSaveRoutine}
             onEditRoutine={handleEditRoutine}
             onCancelEdit={handleCancelEdit}
             isEditing={Boolean(editingRoutineId)}
+            editScrollToken={editScrollToken}
             onStartRoutine={startRoutine}
             onDeleteRoutine={handleDeleteRoutine}
             formatTime={formatTime}

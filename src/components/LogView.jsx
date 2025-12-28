@@ -186,11 +186,11 @@ export default function LogView({
       <div className="panel__header">
         <div className="panel__actions">
           {viewMode === "timeline" ? (
-            <button className="btn btn--card" onClick={() => setViewMode("calendar")}>
+            <button className="btn btn--secondary" onClick={() => setViewMode("calendar")}>
               View calendar
             </button>
           ) : (
-            <button className="btn btn--card" onClick={() => setViewMode("timeline")}>
+            <button className="btn btn--secondary" onClick={() => setViewMode("timeline")}>
               View timeline
             </button>
           )}
@@ -200,7 +200,7 @@ export default function LogView({
       <div className="log__dateblock">
         <div className="log__date-actions">
           <button
-            className="btn btn--card"
+            className="btn btn--secondary"
             onClick={() => {
               setSelectedDate(todayKey);
               setScrollTarget(todayKey);
@@ -454,7 +454,7 @@ export default function LogView({
               </div>
             ))}
             <button
-              className="btn btn--card log__timeline-add"
+              className="btn btn--light log__timeline-add"
               type="button"
               onClick={() => setAddOpen(true)}
             >

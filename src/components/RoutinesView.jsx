@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+
 export default function RoutinesView({
   stretches,
   routines,
@@ -9,16 +11,57 @@ export default function RoutinesView({
   onAddDraftItem,
   onRemoveDraftItem,
   onDraftDurationChange,
+  onReorderDraftItems,
   onSaveRoutine,
   onEditRoutine,
   onCancelEdit,
   isEditing,
+  editScrollToken,
   onStartRoutine,
   onDeleteRoutine,
   formatTime
 }) {
+  const sectionRef = useRef(null);
+  const [draggingIndex, setDraggingIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+
+  useEffect(() => {
+    if (!editScrollToken) return;
+    if (sectionRef.current) {
+      sectionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [editScrollToken]);
+
+  const handleDragStart = (index) => (event) => {
+    setDraggingIndex(index);
+    setDragOverIndex(null);
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", String(index));
+  };
+
+  const handleDragOver = (index) => (event) => {
+    event.preventDefault();
+    if (dragOverIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDrop = (index) => (event) => {
+    event.preventDefault();
+    const rawIndex = event.dataTransfer.getData("text/plain");
+    const fromIndex = rawIndex ? Number(rawIndex) : draggingIndex;
+    if (Number.isNaN(fromIndex) || fromIndex === null) return;
+    onReorderDraftItems(fromIndex, index);
+    setDraggingIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggingIndex(null);
+    setDragOverIndex(null);
+  };
   return (
-    <section className="panel">
+    <section className="panel" ref={sectionRef}>
       <div className="panel__header">
         <div>
           <h2>Routine Builder</h2>
@@ -64,20 +107,35 @@ export default function RoutinesView({
             {draftItems.length === 0 && (
               <p className="empty">No stretches added yet.</p>
             )}
+            {draftItems.length > 0 && (
+              <div className="builder__header">
+                <span>Stretch</span>
+                <span>Seconds</span>
+                <span aria-hidden="true" />
+              </div>
+            )}
             {draftItems.map((item, index) => {
               const stretch = stretches.find(
                 (entry) => entry.id === item.stretchId
               );
+              const isDragging = draggingIndex === index;
+              const isOver = dragOverIndex === index && draggingIndex !== null;
               return (
-                <div key={`${item.stretchId}-${index}`} className="builder__item">
-              <span>
-                    {stretch?.name ?? "Missing stretch"} - {formatTime(
-                      item.duration ?? stretch?.duration ?? 0
-                    )}
-              </span>
+                <div
+                  key={`${item.stretchId}-${index}`}
+                  className={`builder__item${isDragging ? " builder__item--dragging" : ""}${isOver ? " builder__item--over" : ""}`}
+                  draggable
+                  onDragStart={handleDragStart(index)}
+                  onDragOver={handleDragOver(index)}
+                  onDrop={handleDrop(index)}
+                  onDragEnd={handleDragEnd}
+                >
+                  <span className="builder__name">
+                    {stretch?.name ?? "Missing stretch"}
+                  </span>
                   <label className="inline-label">
-                    Seconds
                     <input
+                      className="input--secondary"
                       type="number"
                       min="10"
                       max="600"
@@ -89,10 +147,11 @@ export default function RoutinesView({
                   </label>
                   <button
                     type="button"
-                    className="btn btn--ghost"
+                    className="btn btn--ghost builder__remove"
                     onClick={() => onRemoveDraftItem(index)}
+                    aria-label="Remove stretch"
                   >
-                    Remove
+                    X
                   </button>
                 </div>
               );
@@ -138,6 +197,17 @@ export default function RoutinesView({
                   })}
                 </ul>
               </div>
+              {routine.link && (
+                <div className="card__link">
+                  <a
+                    href={routine.link}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Learn more
+                  </a>
+                </div>
+              )}
               <div className="card__actions">
                 <button
                   className="btn btn--primary"

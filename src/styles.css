@@ -11,6 +11,29 @@
   --deep-purple: #2b1f4b;
   --surface: #f6f2ff;
   --outline: rgba(20, 22, 43, 0.12);
+  --btn-primary-bg: var(--accent);
+  --btn-primary-text: #fff;
+  --btn-primary-shadow: 0 12px 20px rgba(61, 43, 119, 0.25);
+  --btn-secondary-bg: #dbe5ff;
+  --btn-secondary-text: var(--deep-purple);
+  --btn-ghost-text: var(--ink-soft);
+  --btn-ghost-border: 1px solid rgba(18, 22, 44, 0.2);
+  --btn-card-bg: var(--accent);
+  --btn-card-text: #fff;
+  --btn-card-shadow: 0 12px 20px rgba(61, 43, 119, 0.25);
+  --btn-light-bg: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(242, 237, 255, 0.85) 100%
+  );
+  --btn-light-text: var(--deep-purple);
+  --btn-light-border: 1px solid rgba(123, 102, 189, 0.35);
+  --btn-light-shadow: 0 10px 18px rgba(74, 59, 120, 0.1);
+  --input-secondary-bg: #dbe5ff81;
+  --input-secondary-text: var(--deep-purple);
+  --input-secondary-border: 1px solid rgba(61, 43, 119, 0.18);
+  --input-secondary-outline: 2px solid rgba(61, 43, 119, 0.18);
+  --input-secondary-border-focus: rgba(61, 43, 119, 0.35);
 }
 
 * {
@@ -238,6 +261,12 @@ textarea:focus {
 .card--tall {
   flex-direction: column;
   align-items: stretch;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card--tall:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 24px rgba(18, 22, 44, 0.12);
 }
 
 .card h3 {
@@ -251,6 +280,20 @@ textarea:focus {
 .card__actions {
   display: flex;
   gap: 10px;
+}
+
+.card__link {
+  margin-top: 10px;
+}
+
+.card__link a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.card__link a:hover {
+  text-decoration: underline;
 }
 
 .list {
@@ -352,37 +395,48 @@ textarea:focus {
 }
 
 .btn--primary {
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 12px 20px rgba(61, 43, 119, 0.25);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  box-shadow: var(--btn-primary-shadow);
 }
 
 .btn--secondary {
-  background: #dbe5ff;
-  color: var(--deep-purple);
+  background: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(61, 43, 119, 0.18);
 }
 
 .btn--ghost {
   background: transparent;
-  color: var(--ink-soft);
-  border: 1px solid rgba(18, 22, 44, 0.2);
+  color: var(--btn-ghost-text);
+  border: var(--btn-ghost-border);
+}
+
+.btn--light {
+  background: var(--btn-light-bg);
+  color: var(--btn-light-text);
+  border: var(--btn-light-border);
+  box-shadow: var(--btn-light-shadow);
 }
 
 .btn--card {
-  background: linear-gradient(160deg, #ffffff 0%, #f2edff 100%);
-  color: var(--deep-purple);
-  border: 1px solid rgba(123, 102, 189, 0.18);
-  box-shadow: 0 12px 20px rgba(74, 59, 120, 0.12);
+  background: var(--btn-card-bg);
+  color: var(--btn-card-text);
+  box-shadow: var(--btn-card-shadow);
 }
 
 .btn--card:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 20px rgba(74, 59, 120, 0.18);
+  box-shadow: 0 12px 20px rgba(61, 43, 119, 0.32);
 }
 
 .btn--card:active {
   transform: translateY(1px) scale(0.98);
-  box-shadow: 0 6px 12px rgba(61, 43, 119, 0.12);
+  box-shadow: 0 6px 12px rgba(61, 43, 119, 0.2);
 }
 
 .builder {
@@ -400,6 +454,22 @@ textarea:focus {
 .builder__list {
   display: grid;
   gap: 10px;
+}
+
+.builder__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 0 6px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.builder__header span:last-child {
+  width: 40px;
 }
 
 .builder__actions {
@@ -420,13 +490,32 @@ textarea:focus {
 }
 
 .builder__item {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
   padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid rgba(18, 22, 44, 0.1);
   background: #fff;
+}
+
+.builder__name {
+  font-weight: 600;
+}
+
+.builder__remove {
+  align-self: center;
+}
+
+.builder__item--dragging {
+  opacity: 0.6;
+  cursor: grabbing;
+}
+
+.builder__item--over {
+  border-color: rgba(18, 22, 44, 0.35);
+  box-shadow: 0 0 0 2px rgba(18, 22, 44, 0.08);
 }
 
 .inline-label {
@@ -439,6 +528,20 @@ textarea:focus {
 
 .inline-label input {
   width: 90px;
+}
+
+.input--secondary {
+  background: var(--input-secondary-bg);
+  color: var(--input-secondary-text);
+  border: var(--input-secondary-border);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 600;
+}
+
+.input--secondary:focus {
+  outline: var(--input-secondary-outline);
+  border-color: var(--input-secondary-border-focus);
 }
 
 .empty,
