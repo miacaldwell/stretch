@@ -22,7 +22,7 @@ export default function RoutinesView({
       <div className="panel__header">
         <div>
           <h2>Routine Builder</h2>
-          <p>Layer stretches into a steady flow.</p>
+          <p>Create your own routine.</p>
         </div>
       </div>
 
@@ -33,7 +33,7 @@ export default function RoutinesView({
             type="text"
             value={draftName}
             onChange={(event) => setDraftName(event.target.value)}
-            placeholder="Evening release"
+            placeholder="dumb stretch"
             required
           />
         </label>
@@ -47,12 +47,16 @@ export default function RoutinesView({
               >
                 {stretches.map((stretch) => (
                   <option key={stretch.id} value={stretch.id}>
-                    {stretch.name} - {formatTime(stretch.duration)}
+                    {stretch.name}
                   </option>
                 ))}
               </select>
             </label>
-            <button type="button" className="secondary" onClick={onAddDraftItem}>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              onClick={onAddDraftItem}
+            >
               Add to Routine
             </button>
           </div>
@@ -66,11 +70,11 @@ export default function RoutinesView({
               );
               return (
                 <div key={`${item.stretchId}-${index}`} className="builder__item">
-                  <span>
+              <span>
                     {stretch?.name ?? "Missing stretch"} - {formatTime(
                       item.duration ?? stretch?.duration ?? 0
                     )}
-                  </span>
+              </span>
                   <label className="inline-label">
                     Seconds
                     <input
@@ -85,7 +89,7 @@ export default function RoutinesView({
                   </label>
                   <button
                     type="button"
-                    className="ghost"
+                    className="btn btn--ghost"
                     onClick={() => onRemoveDraftItem(index)}
                   >
                     Remove
@@ -98,13 +102,13 @@ export default function RoutinesView({
         <div className="builder__actions">
           <button
             type="submit"
-            className="primary"
+            className="btn btn--primary"
             disabled={!draftName || draftItems.length === 0}
           >
             {isEditing ? "Update Routine" : "Save Routine"}
           </button>
           {isEditing && (
-            <button type="button" className="ghost" onClick={onCancelEdit}>
+            <button type="button" className="btn btn--ghost" onClick={onCancelEdit}>
               Cancel Edit
             </button>
           )}
@@ -135,13 +139,22 @@ export default function RoutinesView({
                 </ul>
               </div>
               <div className="card__actions">
-                <button className="primary" onClick={() => onStartRoutine(routine.id)}>
+                <button
+                  className="btn btn--primary"
+                  onClick={() => onStartRoutine(routine.id)}
+                >
                   Start
                 </button>
-                <button className="secondary" onClick={() => onEditRoutine(routine.id)}>
+                <button
+                  className="btn btn--secondary"
+                  onClick={() => onEditRoutine(routine.id)}
+                >
                   Edit
                 </button>
-                <button className="ghost" onClick={() => onDeleteRoutine(routine.id)}>
+                <button
+                  className="btn btn--ghost"
+                  onClick={() => onDeleteRoutine(routine.id)}
+                >
                   Delete
                 </button>
               </div>
